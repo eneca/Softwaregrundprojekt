@@ -1,0 +1,1 @@
+Dieses Repository wird genutzt um die Implementierung des Spiels „Fantastic Feasts“ zu versionieren.

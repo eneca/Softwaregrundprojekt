@@ -1,0 +1,14 @@
+connect C1 //connect C1 to the server
+connect C2 //connect C2 to the server
+connect C3
+json C1 joinRequest valid 1 //C1 sends valid joinRequest1
+json C2 joinRequest valid 2 //C2 sends valid joinRequest2
+json C1 teamConfig valid x
+json C2 teamConfig valid x
+json C1 teamFormation_left valid x
+json C2 teamFormation_right valid x
+
+EXPECTED
+C1 not_closed joinResponse loginGreeting loginGreeting matchStart snapshot snapshot snapshot snapshot snapshot next
+C2 not_closed joinResponse loginGreeting matchStart snapshot snapshot snapshot snapshot snapshot next
+C3 not_closed

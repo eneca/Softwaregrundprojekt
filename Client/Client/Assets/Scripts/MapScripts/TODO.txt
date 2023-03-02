@@ -1,0 +1,936 @@
+private void moveQuaffleFromGoalPost() {
+        Logger.trace("Moving quaffle from goal post (if needed)");
+        Ball quaffle = game.getBall(Strings.QUAFFLE);
+
+        Player keeper;
+        if (isRightGoalPostSquare(quaffle.getPos())) {
+            //get the keeper
+            keeper = game.getPlayer(Strings.RIGHT_KEEPER);
+
+        } else if (isLeftGoalPostSquare(quaffle.getPos())) {
+            keeper = game.getPlayer(Strings.LEFT_KEEPER);
+        } else {
+            //not on goal post
+            return;
+        }
+
+        if (isKeeperInHisKeeperZone(keeper)) {
+            Square oldPos = quaffle.getPos();
+            quaffle.setPos(keeper);
+            sendMoveBroadcast(quaffle, oldPos);
+            checkGoalThrow(oldPos);
+        } else {
+            Square oldPos = quaffle.getPos();
+            quaffle.setPos(Config.MIDDLE_SQUARE);
+            sendMoveBroadcast(quaffle, oldPos);
+            checkGoalThrow(oldPos);
+        }
+    }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private void checkGoalThrow(Square oldPos) {
+        Ball quaffle = game.getBall(Strings.QUAFFLE);
+
+        //is the new square a goal post square?
+        if (!isGoalPostSquare(quaffle.getPos())) {
+            return;
+        }
+
+        //the new square is a goal post square
+
+        //is there a player on the goal post square?
+        Player onNewSquare = getPlayer(quaffle.getPos());
+
+        if (onNewSquare != null) {
+            //there is a player on the goal post square
+
+            //is the player a defending player?
+            Client clientOfPlayer = game.getClientFromEntity(onNewSquare);
+
+            if ((clientOfPlayer == game.getRightClient() && isRightGoalPostSquare(quaffle.getPos())) ||
+                    clientOfPlayer == game.getLeftClient() && isLeftGoalPostSquare(quaffle.getPos())) {
+                //there is a defending player on the goal post square
+                //-> the quaffle is blocked (flacking) and gets moved
+
+                //move quaffle to adjacent square
+                Square secondOldPos = quaffle.getPos();
+
+                quaffle.setPos(getRandomFreeAdjacentSquare(quaffle.getPos()));
+
+                sendMoveBroadcast(quaffle, secondOldPos);
+
+                //this is flacking
+                if (isProbabilitySuccessful(Strings.FLACKING)) {
+                    //foul was detected
+                    game.ban(onNewSquare);
+
+                    sendBanBroadcast(onNewSquare, Strings.BAN_FLACKING);
+                }
+
+                //we did every action we need to do. Done.
+                return;
+            }
+            //the player is not a defending player
+            //-> this is just handled like a normal goal throw
+
+        }
+
+        //there is either a player on the goal post square that is not defending or the goal post
+        // square does not have a player on it.
+
+        if (isValidGoalThrow(oldPos, quaffle.getPos())) {
+            //it is a valid goal throw.
+            //-> goal
+
+            //increase the points of the corresponding team
+            if (isLeftGoalPostSquare(quaffle.getPos())) {
+                game.getLeftClient().team.points += Config.GOAL_POINTS;
+            } else {
+                game.getRightClient().team.points += Config.GOAL_POINTS;
+            }
+
+            game.goalThisRound();
+            sendGoalPointsChangeBroadcast();
+        }
+
+        //it is not a valid goal throw. Do nothing
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+private boolean isBludgerBeatingValid(Client client, DeltaRequestJson deltaRequestJson) {
+        Square squareToMoveBludgerTo = new Square(deltaRequestJson.xPosNew, deltaRequestJson.yPosNew);
+        Player beatingPlayer = game.getPlayer(deltaRequestJson.activeEntity);
+        Ball bludger = game.getBall(deltaRequestJson.passiveEntity);
+
+        if (squareToMoveBludgerTo.hasNullPos()) {
+            Logger.warn(client.name + " tried to move bludger to a square with a null value");
+            return false;
+        }
+
+        //activeEntity is activeEntity?
+        if (!deltaRequestJson.activeEntity.equals(game.activeEntity.id)) {
+            Logger.warn("tried to do an action on a player that was not active");
+            Logger.trace("active entity: " + game.activeEntity);
+            return false;
+        }
+
+        //beater is supposed to do an action?
+        if (!game.activeTurnType.equals(Strings.ACTION)) {
+            Logger.warn("sent wrong delta for active turn type");
+            return false;
+        }
+
+        //new position more than 3 distance away from old position?
+        if (calculateDistance(bludger.getPos(), squareToMoveBludgerTo) > 3) {
+            Logger.warn("tried to beat bludger farther than 3 distance");
+            return false;
+        }
+
+        //new position not on field?
+        if (!isSquareOnPitch(squareToMoveBludgerTo)) {
+            Logger.warn("tried to hit bludger out of pitch");
+            return false;
+        }
+
+        //all overpassed fields are empty?
+        for (Square s : getOverpassedSquares(beatingPlayer.getPos(), bludger.getPos())) {
+            if (!isSquareFree(s)) {
+                Logger.warn("tried to beat a bludger over an occupied square: " + s);
+                return false;
+            }
+        }
+
+        //lookin good
+        return true;
+    }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private void bludgerBeating(Client client, DeltaRequestJson deltaRequestJson) {
+        Square squareToMoveBludgerTo = new Square(deltaRequestJson.xPosNew, deltaRequestJson.yPosNew);
+        Player beatingPlayer = game.getPlayer(deltaRequestJson.activeEntity);
+        Ball bludger = game.getBall(deltaRequestJson.passiveEntity);
+        Player playerOnDestination = this.getPlayer(squareToMoveBludgerTo);
+
+        if (playerOnDestination == null || playerOnDestination instanceof Beater) {
+            //no player (except for beaters) on new square of bludger
+            sendBludgerBeatingBroadcast(beatingPlayer, bludger);
+        } else {
+            //chaser, keeper, seeker on new square of bludger
+            boolean knockout = isProbabilitySuccessful(Strings.KNOCK_OUT);
+
+            if (knockout) {
+                //player gets knocked out and ball looks for a random free square on entire field and moves there
+                playerOnDestination.knockedOut = true;
+                sendBludgerBeatingBroadcast(beatingPlayer, bludger);
+
+                //calculate new bludger position
+                bludger.setPos(getRandomFreeSquareOnPitch());
+                sendBludgerKnockoutBroadcast(bludger, playerOnDestination, true);
+
+                //we need to recalculate the turnList starting with the other client.
+                createTurnList(getOtherClient(client));
+
+            } else {
+                sendBludgerBeatingBroadcast(beatingPlayer, bludger);
+                sendBludgerKnockoutBroadcast(bludger, playerOnDestination, false);
+            }
+        }
+    }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private boolean isQuaffleThrowValid(Client client, DeltaRequestJson deltaRequestJson) {
+        Square throwTo = new Square(deltaRequestJson.xPosNew, deltaRequestJson.yPosNew);
+
+        if (throwTo.hasNullPos()) {
+            Logger.warn(client.name + " tried to throw a quaffle with a null value");
+            return false;
+        }
+
+        //activeEntity is activeEntity?
+        if (!deltaRequestJson.activeEntity.equals(game.activeEntity.id)) {
+            Logger.warn("tried to do an action on a player that was not active");
+            Logger.trace("active entity: " + game.activeEntity);
+            return false;
+        }
+
+        //thrower is supposed to do an action?
+        if (!game.activeTurnType.equals(Strings.ACTION)) {
+            Logger.warn("sent wrong delta for active turn type");
+            return false;
+        }
+
+        //check if new square is still on pitch
+        if (!isSquareOnPitch(throwTo)) {
+            Logger.warn("tried to throw the quaffle out of the pitch");
+            return false;
+        }
+
+        //lookin good
+        return true;
+    }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private void quaffleThrow(DeltaRequestJson deltaRequestJson) {
+        Square throwTo = new Square(deltaRequestJson.xPosNew, deltaRequestJson.yPosNew);
+        Ball quaffle = game.getBall(Strings.QUAFFLE);
+        Player thrower = game.getPlayer(deltaRequestJson.activeEntity);
+
+        //check if the quaffle gets intercepted by another player
+        Player interceptor = isQuaffleIntercepted(quaffle.getPos(), throwTo);
+
+        if (interceptor != null) {
+            //quaffle was intercepted
+            quaffle.setPos(interceptor);
+            sendQuaffleThrowBroadcast(thrower, interceptor, false);
+        } else {
+            //quaffle was not intercepted
+
+            if (Math.random() < Math.pow(game.matchConfig.probabilities.get(Strings.THROW_SUCCESS), (calculateDistance(throwTo, quaffle.getPos())))) {
+                //throw successful
+
+                sendQuaffleThrowBroadcast(thrower, null, true);
+
+            } else {
+                //throw was not successful
+
+                int n = (int) Math.ceil(calculateDistance(throwTo, quaffle.getPos()) / 7.0f);
+                Square newToSquare = getRandomFreeSquareAround(throwTo, n);
+
+                quaffle.setPos(newToSquare);
+                sendQuaffleThrowBroadcast(thrower, null, false);
+            }
+
+        }
+        checkGoalThrow(thrower.getPos());
+    }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private boolean isSnitchSnatchValid() {
+        if (!(game.activeEntity instanceof Fan)) {
+            Logger.warn(" tried to snitch a snatch with a not fan");
+            return false;
+        } else {
+            Fan activeFan = (Fan) game.activeEntity;
+            if (!activeFan.type.equals(Strings.NIFFLER)) {
+                Logger.warn("tried to snitch a snatch with a fan that is not a niffler");
+                return false;
+            }
+        }
+        return true;
+    }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private void snitchSnatch() {
+        Fan niffler = (Fan) game.activeEntity;
+        Ball snitch = game.getBall(Strings.SNITCH);
+
+        if (game.overtime == Game.NO_OVERTIME && !snitch.getPos().hasNullPos()) {
+            Square moveTo = getRandomFreeAdjacentSquare(snitch.getPos());
+            Square oldPos = snitch.getPos();
+
+            snitch.setPos(moveTo);
+
+            sendSnitchSnatchBroadcast(niffler, oldPos);
+        }
+
+        if (isProbabilitySuccessful(Strings.SNITCH_SNATCH)) {
+            //foul detected
+            niffler.ban();
+
+            sendBanBroadcast(niffler, Strings.BAN_SNITCH_SNATCH);
+        }
+    }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	 private boolean isTrollRoarValid() {
+        if (!(game.activeEntity instanceof Fan)) {
+            Logger.warn("tried to roar with an entity that is not a fan");
+            return false;
+        } else {
+            Fan activeFan = (Fan) game.activeEntity;
+            if (!activeFan.type.equals(Strings.TROLL)) {
+                Logger.warn("tried to roar with a fan that is not a troll");
+                return false;
+            }
+        }
+        return true;
+    }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private void trollRoar() {
+        Ball quaffle = game.getBall(Strings.QUAFFLE);
+        Fan troll = (Fan) game.activeEntity;
+        Square oldPos = quaffle.getPos();
+        Player playerOnQuaffle = getPlayer(quaffle.getPos());
+
+        if (playerOnQuaffle != null) {
+            //no player holds quaffle
+
+            quaffle.setPos(getRandomFreeAdjacentSquare(quaffle.getPos()));
+        }
+
+        sendTrollRoarBroadcast(troll, oldPos, playerOnQuaffle);
+
+        if (isProbabilitySuccessful(Strings.TROLL_ROAR)) {
+            //foul detected
+            troll.ban();
+
+            sendBanBroadcast(troll, Strings.BAN_TROLL_ROAR);
+        }
+    }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private boolean isElfTeleportationValid(DeltaRequestJson deltaRequestJson) {
+        Player teleportedPlayer = game.getPlayer(deltaRequestJson.passiveEntity);
+
+        if (!(game.activeEntity instanceof Fan)) {
+            Logger.warn("tried to teleport with an entity that is not a fan");
+            return false;
+        } else {
+            Fan activeFan = (Fan) game.activeEntity;
+            if (!activeFan.type.equals(Strings.ELF)) {
+                Logger.warn("tried to teleport with a fan that is not an elf");
+                return false;
+            }
+        }
+
+        if (teleportedPlayer == null) {
+            Logger.warn("tried to teleport null");
+            return false;
+        }
+
+        if (teleportedPlayer.isBanned()) {
+            Logger.warn("tried to teleport a banned player");
+            return false;
+        }
+
+        return true;
+    }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private void elfTeleportation(DeltaRequestJson deltaRequestJson) {
+        Player teleportedPlayer = game.getPlayer(deltaRequestJson.passiveEntity);
+        Fan elf = (Fan) game.activeEntity;
+        Square oldPos = teleportedPlayer.getPos();
+
+        teleportedPlayer.setPos(getRandomFreeSquareOnPitch());
+
+        sendElfTeleportationBroadcast(elf, teleportedPlayer, oldPos);
+
+        Ball quaffle = game.getBall(Strings.QUAFFLE);
+        quaffle.setPos(teleportedPlayer.getPos());
+        sendMoveBroadcast(quaffle, oldPos);
+        checkGoalThrow(oldPos);
+
+        if (isProbabilitySuccessful(Strings.ELF_TELEPORTATION)) {
+            //foul detected
+            elf.ban();
+
+            sendBanBroadcast(elf, Strings.BAN_ELF_TELEPORTATION);
+        }
+    }
+	
+	
+	
+	
+	
+	
+	
+	
+	private boolean isGoblinShockValid(Client client, DeltaRequestJson deltaRequestJson) {
+        Player shockedPlayer = game.getPlayer(deltaRequestJson.passiveEntity);
+
+        if (!(game.activeEntity instanceof Fan)) {
+            Logger.warn("active entity is not fan");
+            return false;
+        } else {
+            Fan activeFan = (Fan) game.activeEntity;
+            if (!activeFan.type.equals(Strings.GOBLIN)) {
+                Logger.warn("active entity is not goblin");
+                return false;
+            }
+        }
+
+        if (shockedPlayer == null) {
+            Logger.warn("there is no shocked player");
+            return false;
+        }
+
+        if (shockedPlayer.isBanned()) {
+            Logger.warn("the shocked player is banned");
+            return false;
+        }
+
+        if (game.getClientFromEntity(shockedPlayer) == client) {
+            Logger.warn("the shocked player is from the same team");
+            return false;
+        }
+
+        return true;
+    }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private void goblinShock(DeltaRequestJson deltaRequestJson) {
+        Player shockedPlayer = game.getPlayer(deltaRequestJson.passiveEntity);
+        Fan goblin = (Fan) game.activeEntity;
+        Ball quaffle = getQuaffle(shockedPlayer.getPos());
+
+        if (quaffle != null) {
+            //the shocked player holds the quaffle
+
+            quaffle.setPos(getRandomFreeAdjacentSquare(quaffle.getPos()));
+
+            sendFoolAwayBroadcast(shockedPlayer);
+            checkGoalThrow(shockedPlayer.getPos());
+        }
+
+        Square oldPos = shockedPlayer.getPos();
+        shockedPlayer.setPos(getRandomFreeAdjacentSquare(shockedPlayer.getPos()));
+        sendGoblinShockBroadcast(goblin, shockedPlayer, oldPos);
+
+        if (isProbabilitySuccessful(Strings.GOBLIN_SHOCK)) {
+            //foul detected
+            goblin.ban();
+
+            sendBanBroadcast(goblin, Strings.BAN_GOBLIN_SHOCK);
+        }
+    }
+	
+	
+	
+	
+	
+	
+	
+	
+	 private boolean isMoveValid(DeltaRequestJson deltaRequestJson) {
+        Logger.trace("Checking if move is valid.");
+        Player player = game.getPlayer(deltaRequestJson.activeEntity);
+        Square moveTo = new Square(deltaRequestJson.xPosNew, deltaRequestJson.yPosNew);
+
+        if (moveTo.hasNullPos()) {
+            Logger.warn("tried to move somewhere with a null value");
+            return false;
+        }
+
+        if (player == null) {
+            Logger.warn("tried to move with a null player");
+            return false;
+        }
+
+        if (!(player == game.activeEntity)) {
+            Logger.warn("tried to move with a player is not active entity");
+            return false;
+        }
+
+        if (!(game.activeTurnType.equals(Strings.MOVE))) {
+            Logger.warn("wrong delta for active turn type");
+            return false;
+        }
+
+        if (!isSquareOnPitch(moveTo)) {
+            Logger.warn("tried to move off pitch");
+            return false;
+        }
+
+        if (calculateDistance(player.getPos(), moveTo) > 1) {
+            Logger.warn("tried to move more than 1 distance");
+            return false;
+        }
+
+        Logger.trace("move is valid.");
+        return true;
+    }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private void move(Client client, DeltaRequestJson deltaRequestJson) {
+        Logger.trace("Starting move.");
+
+        boolean playerHasQuaffle = false;
+        String banReason = null;
+        Player player = game.getPlayer(deltaRequestJson.activeEntity);
+        Square moveTo = new Square(deltaRequestJson.xPosNew, deltaRequestJson.yPosNew);
+        Player playerOnMoveTo = getPlayer(moveTo);
+
+
+        //move the player
+        Square oldPos = player.getPos();
+        player.setPos(moveTo);
+
+        sendMoveBroadcast(player, oldPos);
+
+        //foul blatching if player moves on the same square as someone else. chaser/keeper looses quaffle
+        if (playerOnMoveTo != null) {
+            //found another player, where the moving player is moving
+
+            Ball quaffleOnMoveTo = getQuaffle(moveTo);
+            if (quaffleOnMoveTo != null) {
+                //fool away quaffle
+
+                quaffleOnMoveTo.setPos(getRandomFreeAdjacentSquare(quaffleOnMoveTo.getPos()));
+
+                sendFoolAwayBroadcast(playerOnMoveTo);
+                checkGoalThrow(playerOnMoveTo.getPos());
+            }
+
+            //player gets blatched
+            Square oldPosPlayerOnMoveTo = playerOnMoveTo.getPos();
+            playerOnMoveTo.setPos(getRandomFreeAdjacentSquare(playerOnMoveTo.getPos()));
+
+            sendMoveBroadcast(playerOnMoveTo, oldPosPlayerOnMoveTo);
+
+
+            if (isProbabilitySuccessful(Strings.BLATCHING)) {
+                banReason = Strings.BAN_BLATCHING;
+            }
+
+        }
+
+
+        //move the quaffle (if needed)
+        Ball quaffle = getQuaffle(oldPos);
+        if (isPlayerChaserOrKeeper(player) && quaffle != null) {
+            playerHasQuaffle = true;
+            quaffle.setPos(moveTo);
+
+            sendMoveBroadcast(quaffle, oldPos);
+        }
+
+        //flacking if defending player moves on a goalpostsquare
+        if (client == game.getLeftClient()) {
+            if (isLeftGoalPostSquare(moveTo)) {
+                //left player moved on left goal post square
+                if (banReason == null) {
+                    if (isProbabilitySuccessful(Strings.FLACKING)) {
+                        banReason = Strings.BAN_FLACKING;
+                    }
+                }
+            }
+        } else if (client == game.getRightClient()) {
+            if (isRightGoalPostSquare(moveTo)) {
+                //right player moved on right goal post square
+                if (banReason == null) {
+                    if (isProbabilitySuccessful(Strings.FLACKING)) {
+                        banReason = Strings.BAN_FLACKING;
+                    }
+                }
+            }
+        }
+
+        //check for snitch catch
+        Ball snitch = getSnitch(moveTo);
+        if (snitch != null) {
+            //there is a snitch on the square
+
+            if (!(player instanceof Seeker)) {
+                //player is not a seeker -> snitchnip
+                if (banReason == null) {
+                    if (isProbabilitySuccessful(Strings.BAN_SNITCHNIP)) {
+                        banReason = Strings.BAN_SNITCHNIP;
+                    }
+                }
+            } else {
+                //player is a seeker
+                boolean successfullSnitchCatch = isProbabilitySuccessful(Strings.SNITCH_CATCH);
+
+                if (!(game.overtime == Game.NO_OVERTIME)) {
+                    successfullSnitchCatch = true;
+                }
+
+                game.getClientFromEntity(player).team.points += Config.SNITCH_POINTS;
+                sendSnitchCatchBroadcast(player, successfullSnitchCatch);
+
+                //the game is immediately over
+                client.team.caughtSnitch = true;
+                matchFinish();
+            }
+        }
+
+
+        //check for haversacking (chaser moves on a goal post with a quaffle)
+        if (player instanceof Chaser && isGoalPostSquare(moveTo) && playerHasQuaffle) {
+            //haversacking
+
+            //the player scores
+            if (isLeftGoalPostSquare(moveTo)) {
+                game.getLeftClient().team.points += Config.GOAL_POINTS;
+            } else {
+                game.getRightClient().team.points += Config.GOAL_POINTS;
+            }
+
+            game.goalThisRound();
+            sendGoalPointsChangeBroadcast();
+
+            if (banReason == null) {
+                if (isProbabilitySuccessful(Strings.BAN_HAVERSACKING)) {
+                    banReason = Strings.BAN_HAVERSACKING;
+                }
+            }
+        }
+
+
+        //check for stooging (more than one chaser in the enemy keeper zone)
+        if (player instanceof Chaser) {
+            if (client == game.getRightClient()) {
+                if (isPlayerInLeftKeeperZone(player)) {
+                    //the player moved in the enemy keeper zone
+                    if (countEnemyChasersInLeftKeeperZone() > 1) {
+                        //STOOGING!
+                        if (banReason == null) {
+                            if (isProbabilitySuccessful(Strings.BAN_STOOGING)) {
+                                banReason = Strings.BAN_STOOGING;
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (isPlayerInRightKeeperZone(player)) {
+                    //the player moved in the enemy keeper zone
+                    if (countEnemyChasersInRightKeeperZone() > 1) {
+                        //STOOGING!
+                        if (banReason == null) {
+                            if (isProbabilitySuccessful(Strings.BAN_STOOGING)) {
+                                banReason = Strings.BAN_STOOGING;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        //ban the player if needed
+        if (banReason != null) {
+            game.ban(player);
+            sendBanBroadcast(player, banReason);
+        }
+
+        Logger.trace("Player move finished. Player moved to: " + player.getPos());
+    }
+	
+	
+	
+	
+	
+	
+	    private int countEnemyChasersInRightKeeperZone() {
+        int counter = 0;
+        for (Player p : game.getLeftClient().team.players) {
+            if (p instanceof Chaser && isPlayerInRightKeeperZone(p)) {
+                counter++;
+            }
+        }
+        return counter;
+    }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	   private Square getRandomFreeSquareInRightHalf() {
+        while (true) {
+            int x = (int) (Math.random() * 8) + 9;
+            int y = (int) (Math.random() * 13);
+            Square nextSquare = new Square(x, y);
+            if (isSquareOnPitch(nextSquare) && isSquareFree(nextSquare)) {
+                return nextSquare;
+            }
+        }
+    }
+	
+	
+	
+	
+	
+	
+	
+	private boolean isUnbanValid(Client client, DeltaRequestJson deltaRequestJson) {
+        Square moveTo = new Square(deltaRequestJson.xPosNew, deltaRequestJson.yPosNew);
+        Player player = game.getPlayer(deltaRequestJson.activeEntity);
+
+        if (moveTo.hasNullPos()) {
+            Logger.warn("sent null pos.");
+            return false;
+        }
+
+        if (player == null) {
+            Logger.warn("sent invalid player.");
+            return false;
+        }
+
+        if (player != game.activeEntity) {
+            Logger.warn("sent wrong active entity.");
+            return false;
+        }
+
+        if (!(game.activeTurnType.equals(Strings.REMOVE_BAN))) {
+            Logger.warn("sent wrong delta for active turn type");
+            return false;
+        }
+
+        //position is not on pitch
+        if (!isSquareOnPitch(moveTo)) {
+            Logger.warn("sent new player position that is not on the pitch.");
+            return false;
+        }
+
+        //new position is not free
+        if (!isSquareFree(moveTo)) {
+            Logger.warn("sent square that was not free");
+            return false;
+        }
+
+        //square is on correct pitch side
+        if (client == game.getRightClient()) {
+            //client is right client
+            //not on right side
+            return moveTo.x > 8;
+        } else {
+            //client is left client
+            //not on left side
+            return moveTo.x < 8;
+        }
+
+    }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private void unban(DeltaRequestJson deltaRequestJson) {
+        Square moveTo = new Square(deltaRequestJson.xPosNew, deltaRequestJson.yPosNew);
+        Player player = game.getPlayer(deltaRequestJson.activeEntity);
+
+        player.unban(moveTo);
+
+        sendUnbanBroadcast(player);
+
+        updateUnbanList();
+    }
+	
+	
+	
+	
+	
+	
+	
+	private void updateUnbanList() {
+        game.activeEntity = game.getNextUnban();
+
+        if (game.activeEntity == null) {
+            //no more unbans available
+
+            //start new round
+            newRound();
+        } else {
+            //send next
+            game.activeTurnType = Strings.REMOVE_BAN;
+            sendNextBroadcast(game.activeEntity, Strings.REMOVE_BAN, game.matchConfig.timings.get(Strings.PLAYER_PHASE_TIMEOUT));
+        }
+    }

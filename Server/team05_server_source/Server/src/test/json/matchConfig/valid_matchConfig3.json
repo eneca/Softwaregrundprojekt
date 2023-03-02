@@ -1,0 +1,43 @@
+{
+  "timestamp": "2019-04-18 17:20:12.111",
+  "payloadType": "matchConfig",
+  "payload": {
+    "maxRounds": "40",
+    "timings": {
+      "teamFormationTimeout": "1000400",
+      "playerTurnTimeout": "1002340",
+      "fanTurnTimeout": "1002340",
+      "minPlayerPhaseAnimationDuration": "1000",
+      "minFanPhaseAnimationDuration": "1000",
+      "minBallPhaseAnimationDuration": "100"
+    },
+    "probabilities": {
+      "throwSuccess": "0.14159265158979323846264",
+      "knockOut": "0.14159265158979323846264",
+      "foolAway": "0.14159265158979323846264",
+      "catchSnitch": "0.14159265158979323846264",
+      "catchQuaffle": "0.14159265158979323846264",
+      "wrestQuaffle": "0.14159265158979323846264",
+      "extraMove": {
+        "tinderblast": "0.14159265158979323846264",
+        "cleansweep11": "0.14159265158979323846264",
+        "comet260": "0.14159265158979323846264",
+        "nimbus2001": "0.14159265158979323846264",
+        "firebolt": "0.14159265158979323846264"
+      },
+      "foulDetection": {
+        "flacking": "0.14159265158979323846264",
+        "haversacking": "0.14159265158979323846264",
+        "stooging": "0.14159265158979323846264",
+        "blatching": "0.14159265158979323846264",
+        "snitchnip": "0.0001"
+      },
+      "fanFoulDetection": {
+        "elfTeleportation": "0.14159265158979323846264",
+        "goblinShock": "0.14159265158979323846264",
+        "trollRoar": "0.14159265158979323846264",
+        "snitchSnatch": "0.14159265158979323846264"
+      }
+    }
+  }
+}

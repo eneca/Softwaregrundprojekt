@@ -1,0 +1,32 @@
+{
+  "players": {
+    "seeker": {
+      "xPos": "16",
+      "yPos": "4"
+    },
+    "keeper": {
+      "xPos": "16",
+      "yPos": "5"
+    },
+    "chaser1": {
+      "xPos": "16",
+      "yPos": "6"
+    },
+    "chaser2": {
+      "xPos": "16",
+      "yPos": "7"
+    },
+    "chaser3": {
+      "xPos": "16",
+      "yPos": "8"
+    },
+    "beater1": {
+      "xPos": "15",
+      "yPos": "2"
+    },
+    "beater2": {
+      "xPos": "15",
+      "yPos": "3"
+    }
+  }
+}

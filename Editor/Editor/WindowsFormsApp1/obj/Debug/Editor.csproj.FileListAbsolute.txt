@@ -1,0 +1,47 @@
+D:\Studium\sopra\Editor\team25\Editor\Editor\WindowsFormsApp1\obj\Debug\Editor.csprojAssemblyReference.cache
+D:\Studium\sopra\Editor\team25\Editor\Editor\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.Form1.resources
+D:\Studium\sopra\Editor\team25\Editor\Editor\WindowsFormsApp1\obj\Debug\Editor.csproj.GenerateResource.cache
+D:\Studium\sopra\Editor\team25\Editor\Editor\WindowsFormsApp1\obj\Debug\Editor.csproj.CoreCompileInputs.cache
+D:\Studium\sopra\Editor\team25\Editor\Editor\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.exe.config
+D:\Studium\sopra\Editor\team25\Editor\Editor\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.exe
+D:\Studium\sopra\Editor\team25\Editor\Editor\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.pdb
+D:\Studium\sopra\Editor\team25\Editor\Editor\WindowsFormsApp1\bin\Debug\Newtonsoft.Json.dll
+D:\Studium\sopra\Editor\team25\Editor\Editor\WindowsFormsApp1\bin\Debug\Newtonsoft.Json.pdb
+D:\Studium\sopra\Editor\team25\Editor\Editor\WindowsFormsApp1\bin\Debug\Newtonsoft.Json.xml
+D:\Studium\sopra\Editor\team25\Editor\Editor\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.Properties.Resources.resources
+D:\Studium\sopra\Editor\team25\Editor\Editor\WindowsFormsApp1\obj\Debug\Editor.csproj.CopyComplete
+D:\Studium\sopra\Editor\team25\Editor\Editor\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.exe
+D:\Studium\sopra\Editor\team25\Editor\Editor\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.pdb
+C:\Users\Denny\Desktop\Uni repo\Editor\Editor\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.exe.config
+C:\Users\Denny\Desktop\Uni repo\Editor\Editor\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.exe
+C:\Users\Denny\Desktop\Uni repo\Editor\Editor\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.pdb
+C:\Users\Denny\Desktop\Uni repo\Editor\Editor\WindowsFormsApp1\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Denny\Desktop\Uni repo\Editor\Editor\WindowsFormsApp1\bin\Debug\Newtonsoft.Json.pdb
+C:\Users\Denny\Desktop\Uni repo\Editor\Editor\WindowsFormsApp1\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Denny\Desktop\Uni repo\Editor\Editor\WindowsFormsApp1\obj\Debug\Editor.csprojAssemblyReference.cache
+C:\Users\Denny\Desktop\Uni repo\Editor\Editor\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.Form1.resources
+C:\Users\Denny\Desktop\Uni repo\Editor\Editor\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.Properties.Resources.resources
+C:\Users\Denny\Desktop\Uni repo\Editor\Editor\WindowsFormsApp1\obj\Debug\Editor.csproj.GenerateResource.cache
+C:\Users\Denny\Desktop\Uni repo\Editor\Editor\WindowsFormsApp1\obj\Debug\Editor.csproj.CoreCompileInputs.cache
+C:\Users\Denny\Desktop\Uni repo\Editor\Editor\WindowsFormsApp1\obj\Debug\Editor.csproj.CopyComplete
+C:\Users\Denny\Desktop\Uni repo\Editor\Editor\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.exe
+C:\Users\Denny\Desktop\Uni repo\Editor\Editor\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.pdb
+C:\Users\Denny\Desktop\Uni repo\Editor\Editor\WindowsFormsApp1\bin\Debug\nunit.framework.dll
+C:\Users\Denny\Desktop\Uni repo\Editor\Editor\WindowsFormsApp1\bin\Debug\nunit.framework.pdb
+C:\Users\Denny\Desktop\Uni repo\Editor\Editor\WindowsFormsApp1\bin\Debug\nunit.framework.xml
+D:\Studium\sopra\gitzeug\team25\Editor\Editor\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.exe.config
+D:\Studium\sopra\gitzeug\team25\Editor\Editor\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.exe
+D:\Studium\sopra\gitzeug\team25\Editor\Editor\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.pdb
+D:\Studium\sopra\gitzeug\team25\Editor\Editor\WindowsFormsApp1\bin\Debug\Newtonsoft.Json.dll
+D:\Studium\sopra\gitzeug\team25\Editor\Editor\WindowsFormsApp1\bin\Debug\nunit.framework.dll
+D:\Studium\sopra\gitzeug\team25\Editor\Editor\WindowsFormsApp1\bin\Debug\Newtonsoft.Json.xml
+D:\Studium\sopra\gitzeug\team25\Editor\Editor\WindowsFormsApp1\bin\Debug\nunit.framework.pdb
+D:\Studium\sopra\gitzeug\team25\Editor\Editor\WindowsFormsApp1\bin\Debug\nunit.framework.xml
+D:\Studium\sopra\gitzeug\team25\Editor\Editor\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.Form1.resources
+D:\Studium\sopra\gitzeug\team25\Editor\Editor\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.Properties.Resources.resources
+D:\Studium\sopra\gitzeug\team25\Editor\Editor\WindowsFormsApp1\obj\Debug\Editor.csproj.GenerateResource.cache
+D:\Studium\sopra\gitzeug\team25\Editor\Editor\WindowsFormsApp1\obj\Debug\Editor.csproj.CoreCompileInputs.cache
+D:\Studium\sopra\gitzeug\team25\Editor\Editor\WindowsFormsApp1\obj\Debug\Editor.csproj.CopyComplete
+D:\Studium\sopra\gitzeug\team25\Editor\Editor\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.exe
+D:\Studium\sopra\gitzeug\team25\Editor\Editor\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.pdb
+D:\Studium\sopra\gitzeug\team25\Editor\Editor\WindowsFormsApp1\obj\Debug\Editor.csprojAssemblyReference.cache

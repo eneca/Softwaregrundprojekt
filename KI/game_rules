@@ -1,0 +1,105 @@
+Spielregeln und mögliche Aktionen
+
+//Auflistung der Rollen, ihrer Eigenschaften und Möglichkeiten
+
+Jäger:
+    -Anzahl: 3
+    -Aufgabe: Quaffel durch gegnerische Torringe
+    -max 1 Jäger in der gegnerischen Hüterzone
+    -Jäger hebt Quaffel auf sollte er sich auf dem gleichen Feld befinden
+    -In Rundenphase, zuerst Bewegung, daraufhin möglicher Wurf
+    -wenn er den ball hält, gewisse wahrscheinlichkeit dass er diesen vertändelt und der quaffel auf dem nachbarfeld landet
+
+Treiber:
+    -Anzahl: 2
+    -Aufgabe: fernhalten der Klatscher von den eigenen Teamkameraden, lenken auf gegnerische
+    -Bei Zug auf das Feld des Klatschers oder bereits dort ist, kann in der Folgerunde der Klatscher gekloppt werden
+        ("wirft" den Klatscher auf ein Zielfeld)
+
+Hüter:
+    -Anzahl: 1
+    -Aufgabe: schützt die eigenen Torringe
+    -darf Quaffel aufheben und werfen, jedoch keine Tore erzielen
+
+Sucher:
+    -Anzahl: 1
+    -Aufgabe: Goldenen Schnatz fangen
+    -!!Schnatz beendet das Spiel -> nur fangen wenn mit den 30 Punkten das Spiel gewonnen ist
+    -Wenn der Sucher auf dem Feld des Schnatzes ist, fängt er ihn mit einer gewissen Wahrscheinlichkeit
+
+//Bälle
+
+Quaffel:
+    -Anzahl: 1
+    -Bei Wurf durch Torring + 10 Punkte
+    -Bewegt sich nicht von allein
+    -wird aufgehoben indem ein Jäger oder Hüter auf das Feld zieht, kann abgefangen/gepasst werden
+    -Wenn Treiber oder Sucher auf das gleiche Feld ziehen, hopst der Quaffel auf ein benachbartes Feld (auch wenn der Quaffel auf das Feld eines Treibers oder Suchers geworfen wird)
+
+Klatscher:
+    -Anzahl: 2
+    -fliegen eigenständig herum und versuchen Spieler vom Besen zu hauen
+    -bewegt sich jede Runde ein Feld in die Richtung des nähesten Spielers (außer Treiber)
+    -wenn der Klatscher durch eigene Bewegung oder durch einen Klatscherklopp auf das Feld eines Spielers (außer Treiber) kommt, knockt er diesen mit einer gewissen Wahrscheinlichkeit aus
+    -knockt Spieler nicht aus, wenn der Spieler auf das Feld des Klatschers zieht, bleibt unberührt
+    -Spieler auf dem gleichen Feld zählt nicht als nähester Spieler und wird ignoriert
+
+Goldener Schnatz:
+    -Anzahl: 1
+    -fliegt eigenständig herum und versucht den Suchern auszuweichen
+    -gibt 30 Punkte und beendet das Spiel
+    -jede Runde bewegt der Goldene Schnatz sich 1 Feld vom nächsten Sucher weg
+
+//Torschussvektor + Regelung danach + generelle Regelungen
+    
+-Muss von horizontaler Ebene auf das Feld des Torrings kommen um ein Tor erzielen zu können
+-Am Ende der Rundenphase, bekommt der abwehrende Hüter den Quaffel wenn dieser auf einem Torring landet (egal ob Tor oder nicht)
+    Sollte der abwehrende Hüter nicht in der Hüterzone sein, wird der Quaffel aufs Mittelfeld gelegt (sollte dieses belegt sein -> nachbarfeld)
+-wenn ein Spieler oder Ball auf ein freies Nachbarfeld gesetzt werden soll, jedoch alle umliegenden besetzt sind, kann der Spieler/Ball durch besetzte Felder "hindurchtunneln"
+
+//Fouls
+
+Flacken:
+    -betrifft alle Spieler
+    -der abwehrende Spieler bewegt sich auf ein Torringfeld und verhindert, dass der quaffel in diesen torring geworfen werden kann
+
+Nachtarocken:
+    -betrifft nur Jäger
+    -sollte der Jäger mit dem Ball auf ein Torringfeld ziehen, während er den Quaffel hält, ist es zu 100% ein Tor
+
+Stutschen:
+    -betrifft nur Jäger
+    -zu jeder zeit darf sich maximal ein Jäger in der gegnerischen Hüterzone befinden
+
+Keilen:
+    -betrifft alle Spieler
+    -absichtlich mit einem Gegner zusammenstoßen in dem man auf sein Feld zieht
+        ->Zielperson vertändelt ggf. den Quaffel und wird dann auf ein zufälliges freies nachbarfeld verdrängt
+
+Schnatzen:
+    -betrifft alle Spieler, abgesehen vom Sucher
+    -auf das Feld des Goldenen Schnatzes zu ziehen, wenn man kein sucher ist, damit ein sucher ggf. nicht auf das Feld ziehen kann
+
+Regelung:
+    -der Schiedsrichter erkennt mit einer bestimment wahrscheinlichkeit ein Foul
+    -1. ausführung des fouls 2. eventuelles erkennen durch den schiedsrichter 3. ggf. weitere ereignisse die aus der aktion des mit foul davongekommenen spielers resultieren
+    -ein ertappter Spieler wird vom Platz verbannt bis das nächste Tor fällt
+
+//Rundenphasen
+
+1. Ballphasen:
+    a) Der goldene Schnatz macht seine Bewegung
+    b) Die beiden Klatscher machen in zufälliger Reihenfolge ihre Bewegung
+2. Spielerphasen:
+    -zufällige auswahl welches team anfängt seinen ersten zug zu machen (jede runde)
+    -> Team A zufällig ausgewählt (mit anfangen): Spieler1_TeamA -> Spieler1_TeamB -> Spieler2_TeamA....
+    -reihenfolge der spieler innerhalb eines teams ist zufällig (jede runde!?)
+    a) optionale Bewegung   b) optionale Aktion(z.B. Ballwurf, Foul)
+3. Fanphasen:
+    -zufällige Auswahl welcher Fanblock beginnt (jede runde)
+    -> wie bei Spielerphase abwechselnd
+    -reihenfolge der fans innerhalb eines fanblocks ist zufällig (jede runde!?)
+    a) optionale Einmischung in die Partie
+    
+Wenn in 2. oder 3. durch Platzverweise oder Fan-"Verbannung" ein Team weniger Spieler oder Fans hat als das andere, wird solange abgewechselt bis ein Team keine mehr übrig hat,
+welche noch ziehen dürfen. Daraufhin mache alle übrigen direkt nacheinander ihren Zug.

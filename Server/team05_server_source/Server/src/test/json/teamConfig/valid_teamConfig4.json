@@ -1,0 +1,52 @@
+{
+  "name": "Brah",
+  "motto": "Eagle Gang",
+  "colors": {
+    "primary": "123456",
+    "secondary": "234536"
+  },
+  "image": "awers24356gzuhijohzugiozghijohuzgtfgzhuijohzugtghjuiokhuzgtfrgzuhiozhtfr",
+  "fans": {
+    "goblins": "1",
+    "trolls": "1",
+    "elves": "2",
+    "nifflers": "3"
+  },
+  "players": {
+    "seeker": {
+      "name": "Parry Hotter",
+      "broom": "tinderblast",
+      "sex": "m"
+    },
+    "keeper": {
+      "name": "Wonald Reasley",
+      "broom": "tinderblast",
+      "sex": "m"
+    },
+    "chaser1": {
+      "name": "Wiener Geasley",
+      "broom": "cleansweep11",
+      "sex": "f"
+    },
+    "chaser2": {
+      "name": "Germione Hranger",
+      "broom": "comet260",
+      "sex": "f"
+    },
+    "chaser3": {
+      "name": "Mraco Dalfoy",
+      "broom": "nimbus2001",
+      "sex": "f"
+    },
+    "beater1": {
+      "name": "Nymphomaniac Tonks",
+      "broom": "firebolt",
+      "sex": "f"
+    },
+    "beater2": {
+      "name": "Dedric Ciggory",
+      "broom": "firebolt",
+      "sex": "m"
+    }
+  }
+}

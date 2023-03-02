@@ -1,0 +1,40 @@
+connect C01
+connect C02
+connect C03
+connect C04
+connect C05
+connect C06
+connect C07
+connect C08
+connect C09
+
+json C01 joinRequest valid 1
+json C02 joinRequest valid 2
+json C03 joinRequest valid 3
+json C04 joinRequest valid 4
+json C05 joinRequest valid 5
+json C06 joinRequest valid 6
+json C07 joinRequest valid 7
+json C08 joinRequest valid 8
+json C09 joinRequest valid 9
+
+json C01 teamConfig valid x
+json C02 teamConfig valid x
+
+json C07 teamConfig valid x
+json C08 teamConfig valid x
+json C09 teamConfig valid x
+
+json C01 teamFormation_left valid x
+json C02 teamFormation_right valid x
+
+EXPECTED
+C01 not_closed loginGreeting joinResponse loginGreeting loginGreeting loginGreeting loginGreeting loginGreeting matchStart snapshot snapshot snapshot snapshot snapshot next
+C02 not_closed loginGreeting joinResponse loginGreeting loginGreeting loginGreeting loginGreeting matchStart snapshot snapshot snapshot snapshot snapshot next
+C03 not_closed loginGreeting joinResponse loginGreeting loginGreeting loginGreeting matchStart snapshot snapshot snapshot snapshot snapshot next
+C04 not_closed loginGreeting joinResponse loginGreeting loginGreeting matchStart snapshot snapshot snapshot snapshot snapshot next
+C05 not_closed loginGreeting joinResponse loginGreeting matchStart snapshot snapshot snapshot snapshot snapshot next
+C06 not_closed loginGreeting joinResponse matchStart snapshot snapshot snapshot snapshot snapshot next
+C07 not_closed loginGreeting joinResponse loginGreeting loginGreeting matchStart
+C08 not_closed loginGreeting joinResponse loginGreeting matchStart
+C09 not_closed loginGreeting joinResponse matchStart

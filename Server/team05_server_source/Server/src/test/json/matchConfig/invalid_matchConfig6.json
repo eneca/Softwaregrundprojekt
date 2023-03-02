@@ -1,0 +1,38 @@
+{
+  "maxRounds": "90",
+  "timeouts": {
+    "playerTurnTimeout": "10000",
+    "fanTurnTimeout": "10000",
+    "playerPhaseTime": "10000",
+    "fanPhaseTime": "10000",
+    "ballPhaseTime": "10000"
+  },
+  "probabilities": {
+    "throwSuccess": "1.0",
+    "knockOut": "0.5",
+    "foolAway": "0.1",
+    "catchSnitch": "0.01",
+    "catchQuaffle": "0.6",
+    "wrestQuaffle": "0.9",
+    "extraMove": {
+      "tinderblast": "1.00345",
+      "cleansweep11": "0.5",
+      "comet260": "0.2",
+      "nimbus2001": "0.1",
+      "firebolt": "0.0"
+    },
+    "foulDetection": {
+      "flacking": "0.6",
+      "haversacking": "0.694",
+      "stooging": "0.12",
+      "blatching": "0.02",
+      "snitchnip": "0.0005"
+    },
+    "fanFoulDetection": {
+      "elfTeleportation": "0.5",
+      "goblinShock": "1.0",
+      "trollRoar": "0.7",
+      "snitchSnatch": "0.0"
+    }
+  }
+}

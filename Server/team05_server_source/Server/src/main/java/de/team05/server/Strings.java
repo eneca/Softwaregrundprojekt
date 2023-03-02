@@ -1,0 +1,153 @@
+package de.team05.server;
+
+/**
+ * Strings stores most of the Strings used in the program. (and some that are not used)
+ */
+public class Strings {
+    public static final String JOIN_REQUEST = "joinRequest";
+    public static final String LOGIN_GREETING = "loginGreeting";
+    public static final String JOIN_RESPONSE = "joinResponse";
+    public static final String SEND_DEBUG = "sendDebug";
+    public static final String GLOBAL_DEBUG = "globalDebug";
+    public static final String PRIVATE_DEBUG = "privateDebug";
+    public static final String MATCH_CONFIG = "matchConfig";
+    public static final String TEAM_CONFIG = "teamConfig";
+    public static final String MATCH_START = "matchStart";
+    public static final String TEAM_FORMATION = "teamFormation";
+    public static final String SNAPSHOT = "snapshot";
+    public static final String PAUSE_REQUEST = "pauseRequest";
+    public static final String CONTINUE_REQUEST = "continueRequest";
+    public static final String PAUSE_RESPONSE = "pauseResponse";
+    public static final String NEXT = "next";
+    public static final String NEXT_UNICAST = "nextUnicast";
+    public static final String DELTA_REQUEST = "deltaRequest";
+    public static final String DELTA_BROADCAST = "deltaBroadcast";
+    public static final String DELTA_UNICAST = "deltaUnicast";
+    public static final String MATCH_FINISH = "matchFinish";
+    public static final String GET_REPLAY = "getReplay";
+    public static final String REPLAY = "replay";
+    public static final String RECONNECT = "reconnect";
+    public static final String[] brooms = {"tinderblast", "cleansweep11", "comet260", "nimbus2001", "firebolt"};
+    public static final String[] sex = {"m", "f"};
+    public static final String SNITCH_CATCH = "snitchCatch";
+    public static final String SNITCH_SNATCH = "snitchSnatch";
+    public static final String BLUDGER_BEATING = "bludgerBeating";
+    public static final String QUAFFLE_THROW = "quaffleThrow";
+    public static final String TROLL_ROAR = "trollRoar";
+    public static final String ELF_TELEPORTATION = "elfTeleportation";
+    public static final String GOBLIN_SHOCK = "goblinShock";
+    public static final String WOMBAT_POO = "wombatPoo";
+    public static final String REMOVE_POO = "removePoo";
+    public static final String BAN = "ban";
+    public static final String BLUDGER_KNOCKOUT = "bludgerKnockout";
+    public static final String MOVE = "move";
+    public static final String WREST_QUAFFLE = "wrestQuaffle";
+    public static final String FOOL_AWAY = "foolAway";
+    public static final String PHASE_CHANGE = "phaseChange";
+    public static final String GOAL_POINTS_CHANGE = "goalPointsChange";
+    public static final String ROUND_CHANGE = "roundChange";
+    public static final String SKIP = "skip";
+    public static final String TURN_USED = "turnUsed";
+
+    public static final String LEFT_SEEKER = "leftSeeker";
+    public static final String RIGHT_SEEKER = "rightSeeker";
+    public static final String LEFT_KEEPER = "leftKeeper";
+    public static final String RIGHT_KEEPER = "rightKeeper";
+    public static final String LEFT_CHASER_1 = "leftChaser1";
+    public static final String LEFT_CHASER_2 = "leftChaser2";
+    public static final String LEFT_CHASER_3 = "leftChaser3";
+    public static final String RIGHT_CHASER_1 = "rightChaser1";
+    public static final String RIGHT_CHASER_2 = "rightChaser2";
+    public static final String RIGHT_CHASER_3 = "rightChaser3";
+    public static final String LEFT_BEATER_1 = "leftBeater1";
+    public static final String LEFT_BEATER_2 = "leftBeater2";
+    public static final String RIGHT_BEATER_1 = "rightBester1";
+    public static final String RIGHT_BEATER_2 = "rightBester2";
+    public static final String SNITCH = "snitch";
+    public static final String BLUDGER1 = "bludger1";
+    public static final String BLUDGER2 = "bludger2";
+    public static final String QUAFFLE = "quaffle";
+    public static final String LEFT_GOBLIN = "leftGoblin";
+    public static final String RIGHT_GOBLIN = "rightGoblin";
+    public static final String LEFT_TROLL = "leftTroll";
+    public static final String RIGHT_TROLL = "rightTroll";
+    public static final String LEFT_ELF = "leftElf";
+    public static final String RIGHT_ELF = "rightElf";
+    public static final String LEFT_NIFFLER = "leftNiffler";
+    public static final String RIGHT_NIFFLER = "rightNiffler";
+    public static final String ACTION = "action";
+    public static final String REMOVE_BAN = "removeBan";
+    public static final String FAN = "fan";
+    public static final String BALL_PHASE = "ballPhase";
+    public static final String PLAYER_PHASE = "playerPhase";
+    public static final String FAN_PHASE = "fanPhase";
+    public static final String GAME_FINISH = "gameFinish";
+    public static final String UNBAN = "unban";
+    public static final String JOIN_RESPONSE_MESSAGE = "MOERDAN WILL DICH HABEN!";
+
+    public static final String SEEKER = "Seeker";
+    public static final String KEEPER = "Keeper";
+    public static final String CHASER1 = "Chaser1";
+    public static final String CHASER2 = "Chaser2";
+    public static final String CHASER3 = "Chaser3";
+    public static final String BEATER1 = "Beater1";
+    public static final String BEATER2 = "Beater2";
+    public static final String GOBLIN = "Goblin";
+    public static final String ELF = "Elf";
+    public static final String NIFFLER = "Niffler";
+    public static final String TROLL = "Troll";
+    public static final String WOMBAT = "Wombat";
+    public static final String PLAYER_TURN_TIMEOUT = "playerTurnTimeout";
+    public static final String FAN_TURN_TIMEOUT = "fanTurnTimeout";
+    public static final String PLAYER_PHASE_TIMEOUT = "playerPhaseTimeout";
+
+    public static final String THROW_SUCCESS = "throwSuccess";
+    public static final String KNOCK_OUT = "knockOut";
+    public static final String CATCH_SNITCH = "catchSnitch";
+    public static final String CATCH_QUAFFLE = "catchQuaffle";
+    public static final String EXTRA_MOVE_TINDERBLAST = "extraMoveTinderblast";
+    public static final String EXTRA_MOVE_CLEANSWEEP11 = "extraMoveCleansweep11";
+    public static final String EXTRA_MOVE_COMET260 = "extraMoveComet260";
+    public static final String EXTRA_MOVE_NIMBUS2001 = "extraMoveNimbus2001";
+    public static final String EXTRA_MOVE_FIREBOLT = "extraMoveFirebolt";
+    public static final String FLACKING = "flacking";
+    public static final String HAVERSACKING = "haversacking";
+    public static final String STOOGING = "stooging";
+    public static final String BLATCHING = "blatching";
+    public static final String SNITCHNIP = "snitchnip";
+
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLACK = "\u001B[30m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_PURPLE = "\u001B[35m";
+    public static final String ANSI_CYAN = "\u001B[36m";
+    public static final String ANSI_WHITE = "\u001B[37m";
+
+    public static final String DISQUALIFICATION = "disqualification";
+    public static final String BOTH_DISQUALIFICATION_MOST_POINTS = "bothDisqualificationMostPoints";
+    public static final String BOTH_DISQUALIFICATION_POINTS_EQUAL_SNITCH_CATCH = "bothDisqualificationPointsEqualSnitchCatch";
+    public static final String BOTH_DISQUALIFICATION_POINTS_EQUAL_LAST_DISQUALIFICATION = "bothDisqualificationPointsEqualLastDisqualification";
+    public static final String MOST_POINTS = "mostPoints";
+    public static final String POINTS_EQUAL_SNITCH_CATCH = "pointsEqualSnitchCatch";
+    public static final String VIOLATION_OF_PROTOCOL = "violationOfProtocol";
+
+    public static final String BAN_STOOGING = "stooging";
+    public static final String BAN_BLATCHING = "blatching";
+    public static final String BAN_FLACKING = "flacking";
+    public static final String BAN_HAVERSACKING = "haversacking";
+    public static final String BAN_SNITCHNIP = "snitchnip";
+    public static final String BAN_SNITCH_SNATCH = "snitchSnatch";
+    public static final String BAN_ELF_TELEPORTATION = "elfTeleportation";
+    public static final String BAN_GOBLIN_SHOCK = "goblinShock";
+    public static final String BAN_TROLL_ROAR = "trollRoar";
+    public static final String BAN_WOMBAT_POO = "wombatPoo";
+
+    public static final String TEAM_FORMATION_TIMEOUT = "teamFormationTimeout";
+
+    public static final String MIN_PLAYER_PHASE_ANIMATION_DURATION = "minPlayerPhaseAnimationDuration";
+    public static final String MIN_FAN_PHASE_ANIMATION_DURATION = "minFanPhaseAnimationDuration";
+    public static final String MIN_BALL_PHASE_ANIMATION_DURATION = "minBallPhaseAnimationDuration";
+}

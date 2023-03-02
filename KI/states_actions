@@ -1,0 +1,28 @@
+Zustände und die daraus folgenden Aktionen
+
+//Mögliche Zustände des Jägers
+
+-Hält den Quaffel => Bewegung Richtung gegnerische Torringe, Torwurf/Pass zu anderem Jäger
+-Hält den Quaffel nicht => Bewegung in Richtung des Quaffels
+-Ausgeknockt => Keine Aktion
+-Vom Platz verwiesen => Keine Aktion
+(Info für Bewertung, ist ein anderer Jäger in der gegnerischen Hüterzone)
+
+//Mögliche Zustände des Treibers
+
+-auf dem Feld des Klatschers => Kloppen auf die Gegner
+-nicht auf dem Feld des Klatschers => Positionierung zwischen Klatscher und Teamspieler
+-vom Platz verwiesen => Keine Aktion
+
+//Mögliche Zustände des Hüters
+
+-Hält den Quaffel => Bewegung Richtung gegnertische Torringe, Pass zu einem Jäger
+-Hält den Quaffel nicht => Positionierung vor den Torringen um Torschüsse zu blocken
+-Ausgeknockt => Keine Aktion
+-Vom Platz verwiesen => Keine Aktion
+
+//Mögliche Zustände des Suchers
+
+-"Sucht" den Schnatz => Bewegung Richtung Schnatz, Achtung vorm Klatscher
+-Ausgeknockt => Keine Aktion
+-vom Platz verwiesen => Keine Aktion

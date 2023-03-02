@@ -1,0 +1,44 @@
+{
+  "timestamp": "2019-04-18 17:20:12.111",
+  "payloadType": "matchConfig",
+  "payload": {
+    "maxRounds": "50",
+    "timings": {
+      "teamFormationTimeout": "300000",
+      "playerTurnTimeout": "20000",
+      "fanTurnTimeout": "20000",
+      "minPlayerPhaseAnimationDuration": "0",
+      "minFanPhaseAnimationDuration": "0",
+      "minBallPhaseAnimationDuration": "0"
+    },
+    "probabilities": {
+      "throwSuccess": "0.9",
+      "knockOut": "0.6",
+      "foolAway": "0.5",
+      "catchSnitch": "0.4",
+      "catchQuaffle": "0.2",
+      "wrestQuaffle": "0.6",
+      "extraMove": {
+        "tinderblast": "0.2",
+        "cleansweep11": "0.3",
+        "comet260": "0.35",
+        "nimbus2001": "0.4",
+        "firebolt": "0.45"
+      },
+      "foulDetection": {
+        "flacking": "0.2",
+        "haversacking": "0.2",
+        "stooging": "0.1",
+        "blatching": "0.3",
+        "snitchnip": "0.5"
+      },
+      "fanFoulDetection": {
+        "elfTeleportation": "0.7",
+        "goblinShock": "0.5",
+        "trollRoar": "0.4",
+        "snitchSnatch": "0.2",
+        "wombatPoo": "0.2"
+      }
+    }
+  }
+}

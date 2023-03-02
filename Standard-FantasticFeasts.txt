@@ -1,0 +1,1213 @@
+[\
+title: Standard-FantasticFeasts-REVIEWME-5
+subtitle: Standardisierungsdokument zum Softwaregrundprojekt 18/19
+documentclass: scrartcl
+author: sopra teams
+date: 15. Februar 2019
+toc: true
+numbersections: true
+geometry: margin=2.5cm
+urlcolor: blue
+header-includes: |
+    \usepackage{fancyhdr}
+    \pagestyle{fancy}
+    \lfoot{REVIEWME-5: 15. Februar 2019}
+    \rfoot{Page \thepage}
+---
+# Kommandozeilenparameter für KI und Server
+
+## Type Declaration
+### (int/Difficulty)
+- 0: Maximale Schwierigkeit
+- 1: weniger schwer
+- 2: noch weniger schwer
+- 3:  ...
+- n: naiv
+
+### (int/Verbosity)
+- 0: keine Ausgabe
+- 1: mehr Ausgaben
+- 2: noch mehr Ausgaben
+- 3:  ...
+- n: alles
+
+## Definition
+### KI
+#### Verbindlich
+zum Start der KI benötigt
+```
+ -a --address <host> Adresse des Servers
+ -t --team <path>    Pfad zur Team-Konfiguration
+ -l --lobby <string> Name der Lobby
+```
+
+#### Optional
+Muss implementiert werden, nicht unbedingt zum starten der KI benötigt.
+```
+ -u --username <string>  userName der KI
+ -k --password <string>  Passwort der KI
+ -h --help               Hilfe
+ -p --port <port>        Server-Port (default --port 4488)
+ -d --difficulty <int>   Schwierigkeit
+ -v --verbosity <int>    Verbosity (ausführlichkeit der Log-Information)
+```
+### Server
+#### Verbindlich
+zum Start des Servers benötigt
+```
+ -m --match <path>  Pfad zur Partie-Konfiguration
+```
+#### Optional
+Muss implementiert werden, nicht unbedingt zum starten des Servers benötigt.
+```
+ -h --help             Hilfe
+ -p --port <port>      Server-Port
+ -v --verbosity <int>  Verbosity (ausführlichkeit der Log-Information)
+```
+# Container
+
+## Description
+
+Der Container ist ein valides Json-Objekt und beschreibt den strukturellen Zusammenhang der definierenten jsonpayload Formate.
+Im Zusammenspiel mit dem Login stellt der Container primitive Identitätsabsicherung.
+Falls der payloadType hier nicht definiert ist, wird er einfach ignoriert.
+Falls es Felder im json gibt, welche hier nicht definiert sind, werden sie ebenfalls ignoriert.
+Der timestamp welcher vom Client geschickt wurde muss nicht richtig sein und wird vom Server mit der Ankunftszeit des Tcp-packets überschrieben.
+
+
+
+## Type Declaration
+
+### `(string/payloadType)`
+  - `joinRequest`
+  - `loginGreeting`
+  - `joinResponse`
+  - `sendDebug`
+  - `globalDebug`
+  - `privateDebug`
+  - `matchConfig`
+  - `teamConfig`
+  - `matchStart`
+  - `teamFormation`
+  - `snapshot`
+  - `pauseRequest`
+  - `continueRequest`
+  - `pauseResponse`
+  - `next`
+  - `deltaRequest`
+  - `deltaBroadcast`
+  - `matchFinish`
+  - `getReplay`
+  - `replay`
+  - `reconnect`
+
+## Definition
+### container
+``` json
+{
+  "timestamp": "(string/yyyy-MM-dd HH:mm:ss.SSS)",
+  "payloadType" : "(string/payloadType)",
+  "payload": "(json)"
+}
+```
+
+
+### Overview
+
+- request: Client sendet an Server
+- broadcast: Server sendet an alle
+- unicast: Server sendet an einen Client
+
+| request                       | broadcast      | unicast      | siehe               |
+|-------------------------------|----------------|--------------|---------------------|
+| joinRequest                   | loginGreeting  | joinResponse | siehe Login         |
+| sendDebug                     | globalDebug    | privateDebug | siehe Debug         |
+|                               | matchConfig    |              | siehe MatchConfig   |
+| teamConfig                    |                |              | siehe TeamConfig    |
+|                               | matchStart     |              | siehe MatchStart    |
+| teamFormation                 |                |              | siehe TeamFormation |
+|                               | snapshot       |              | siehe Snapshot      |
+| pauseRequest, continueRequest | pauseResponse  |              | siehe Pause         |
+|                               | next           |              | siehe Next          |
+| deltaRequest                  | deltaBroadcast |              | siehe Delta         |
+|                               | matchFinish    |              | siehe MatchFinish   |
+| getReplay                     | replay         |              | siehe Replay        |
+|                               |                | reconnect    | siehe Reconnect     |
+
+
+
+
+## Debug
+
+### Description
+
+Server und Client können jederzeit debug Information senden.
+Verhalten ist nicht weiter definiert. d.h. Ignorieren, sich mit anderen unterhalten, Fehlermeldungen an den Client senden, Shakespeare vorlesen. Der Server sollte keine unnötigen Debug-Informationen an Clients senden.
+
+### Definition
+#### sendDebug
+``` json
+{
+  "information" : "(string)"
+}
+```
+#### globalDebug
+``` json
+{
+  "information" : "(string)"
+}
+```
+
+#### privateDebug
+``` json
+{
+  "information" : "(string)"
+}
+```
+
+
+### Example
+
+``` json
+{
+  "timestamp": "2019-02-11 11:11:11.111",
+  "payloadType" : "sendDebug",
+  "payload": {
+    "information" : "hagrid, I love Magic"
+  }
+}
+```
+
+``` json
+{
+  "timestamp": "2019-02-11 11:13:12.111",
+  "payloadType" : "globalDebug",
+  "payload": {
+    "information" : "50 points to gryffindor"
+  }
+}
+```
+
+``` json
+{
+  "timestamp": "2019-02-11 12:10:12.111",
+  "payloadType" : "privateDebug",
+  "payload": {
+    "information" : "you are wizard harry"
+  }
+}
+```
+
+
+## Login
+
+### Type Declaration
+- `(string/alphanumerisch)`
+  - `regex=[a-zA-Z0-9]*`
+
+### Definition
+#### joinRequest
+``` json
+{
+  "lobby": "(string)",
+  "userName": "(string/alphanumerisch)",
+  "password" : "(string)",
+  "isArtificialIntelligence":"(boolean)",
+  "mods":["(string)"]
+}
+```
+#### loginGreeting
+``` json
+{
+  "userName" : "(string)"
+}
+```
+
+#### joinResponse
+``` json
+{
+  "message" : "(string)"
+}
+```
+
+
+### Example
+
+``` json
+{
+  "timestamp": "2019-02-11 11:13:12.111",
+  "payloadType" : "joinRequest",
+  "payload": {
+    "lobby": "MemesOnly",
+    "userName": "dealwithit",
+    "userPassword" : "1337",
+    "isArtificialIntelligence":"false",
+    "mods":[]
+  }
+}
+```
+
+``` json
+{
+  "timestamp": "2019-02-11 11:13:12.112",
+  "payloadType" : "loginGreeting",
+  "payload": {
+    "userName" : "dealwithit"
+  }
+}
+```
+
+``` json
+{
+  "timestamp": "2019-02-11 11:13:12.113",
+  "payloadType" : "joinResponse",
+  "payload": {
+    "message" : "welcome, please enjoy"
+  }
+}
+```
+# Konfigurationen für Team und Partie
+
+## Description
+
+Die "matchConfig" und "teamConfig" sind Artefakte welche in einem File gespeichert werden.
+
+## Type Declaration
+### `(string/role)`
+  - `chaser` (Jäger)
+  - `beater` (Treiber)
+  - `keeper` (Hüter)
+  - `seeker` (Sucher)
+
+### `(string/fan)`
+  - `goblin` (Kobold)
+  - `troll` (Troll)
+  - `elf` (Elf)
+  - `niffler` (Niffler)
+
+### `(string/sex)`
+  - `m` (Männlich)
+  - `f` (Weiblich)
+
+### `(string/broom)`
+  - `thinderblast`
+  - `cleansweep-11`
+  - `comet-260`
+  - `nimbus-2001`
+  - `firebolt`
+
+### `(string/RRGGBB)`
+  - Hexadezimaler RGB-Wert  
+  - Bsp.: `C80010`
+
+### `(float/prob)`
+  - Wahrscheinlichkeit als (Komma-)Zahl von 0 bis 1  
+  - Bsp.: `0.87`
+
+### `(string/base64/png)`
+  - Eine PNG-Datei base64-kodiert als String 256x256 Pixel
+
+## Definition
+### matchConfig (file)
+``` json
+{
+  "maxRounds": "(int)",
+  "timeouts": {
+    "playerTurnTimeout": "(int/millisec)",
+    "fanTurnTimeout": "(int/millisec)",
+    "playerPhaseTime": "(int/millisec)",
+    "fanPhaseTime": "(int/millisec)",
+    "ballPhaseTime": "(int/millisec)"
+  },
+  "propabilities": {
+    "goal": "(float/prob)",
+    "throwSuccess": "(float/prob)",
+    "knockOut": "(float/prob)",
+    "foolAway": "(float/prob)",
+    "catchSnitch": "(float/prob)",
+    "catchQuaffle": "(float/prob)",
+    "wrestQuaffle": "(float/prob)",
+    "extraMove": {
+      "thinderblast": "(float/prob)",
+      "cleansweep11": "(float/prob)",
+      "comet260": "(float/prob)",
+      "nimbus2001": "(float/prob)",
+      "firebolt": "(float/prob)"
+    },
+    "foulDetection": {
+      "flacking": "(float/prob)",
+      "haversacking": "(float/prob)",
+      "stooging": "(float/prob)",
+      "blatching": "(float/prob)",
+      "snitchnip": "(float/prob)"
+    },
+    "fanFoulDetection": {
+      "elfTeleportation": "(float/prob)",
+      "goblinShock": "(float/prob)",
+      "trollRoar": "(float/prob)",
+      "snitchSnatch": "(float/prob)"
+    }
+  }
+}
+```
+
+### teamConfig (file)
+``` json
+{
+  "name": "(string)",
+  "motto": "(string)",
+  "colors": {
+    "primary": "(string/RRGGBB)",
+    "secondary": "(string/RRGGBB)"
+  },
+  "image": "(string/base64/png)",
+  "fans": {
+    "goblins": "(int)",
+    "trolls": "(int)",
+    "elfs": "(int)",
+    "nifflers": "(int)"
+  },
+  "players": {
+    "seeker": {
+      "name": "(string)",
+      "broom": "(string/broom)",
+      "sex": "(string/sex)"
+    },
+    "keeper": {
+      "name": "(string)",
+      "broom": "(string/broom)",
+      "sex": "(string/sex)"
+    },
+    "chaser1": {
+      "name": "(string)",
+      "broom": "(string/broom)",
+      "sex": "(string/sex)"
+    },
+    "chaser2": {
+      "name": "(string)",
+      "broom": "(string/broom)",
+      "sex": "(string/sex)"
+    },
+    "chaser3": {
+      "name": "(string)",
+      "broom": "(string/broom)",
+      "sex": "(string/sex)"
+    },
+    "beater1": {
+      "name": "(string)",
+      "broom": "(string/broom)",
+      "sex": "(string/sex)"
+    },
+    "beater2": {
+      "name": "(string)",
+      "broom": "(string/broom)",
+      "sex": "(string/sex)"
+    }
+  }
+}
+```
+# Match-Start-Finish
+
+## Description
+Wird am Anfang und am Ende der Partie gesendet.
+Hiermit wird festgelegt, wer "linkes" bzw. "rechtes" Team ist, indem die Configs bzw. die UserNames auf "left" bzw. "right" gematcht werden.
+
+## Type Declaration
+
+### `(string/victoryReasonType)`
+  - `disqualification`
+  - `bothDisqualificationMostPoints`
+  - `bothDisqualificationPointsEqualSnitchCatch`
+  - `bothDisqualificationPointsEqualLastDisqualification`
+  - `mostPoints`
+  - `pointsEqualSnitchCatch`
+  - `violationOfProtocol`
+
+## Definition
+### matchStart
+``` json
+{
+  "matchConfig":"(json/matchConfig)",
+  "leftTeamConfig":"(json/teamConfig)",
+  "rightTeamConfig":"(json/teamConfig)",
+  "leftTeamUserName":"(string)",
+  "rightTeamUserName":"(string)"
+}
+```
+### matchFinish
+``` json
+{
+	"endRound": "(int)",
+	"leftPoints":"(int)",
+	"rightPoints":"(int)",
+	"winnerUserName": "(string)",
+	"victoryReason": "(string/victoryReasonType)"
+}
+```
+# TeamFormation
+
+## Description
+
+Die Teamformation ist am Anfang des Spiels. Die verbundenen Spieler rechts und links stellen ihre Spielfiguren
+entsprechend der Spielregeln auf.
+
+## Definition
+
+### teamFormation
+``` json
+{
+  "players": {
+    "seeker": {
+      "xPos": "(int/posx)",
+      "yPos": "(int/posy)"
+    },
+    "keeper": {
+      "xPos": "(int/posx)",
+      "yPos": "(int/posy)"
+    },
+    "chaser1": {
+      "xPos": "(int/posx)",
+      "yPos": "(int/posy)"
+    },
+    "chaser2": {
+      "xPos": "(int/posx)",
+      "yPos": "(int/posy)"
+    },
+    "chaser3": {
+      "xPos": "(int/posx)",
+      "yPos": "(int/posy)"
+    },
+    "beater1": {
+      "xPos": "(int/posx)",
+      "yPos": "(int/posy)"
+    },
+    "beater2": {
+      "xPos": "(int/posx)",
+      "yPos": "(int/posy)"
+    }
+  }
+}
+```
+# Snapshot
+
+## Description
+Der Snapshot beinhaltet Informationen vom momentanen Zustand des Spiels.
+Ist für die Leute die Guis gestallten interessant.
+Der Snapshot allein reicht aus um ein Spiel als spectator zuzuschauen.
+
+## Type Declaration
+
+### `(string/fanType)`
+  - `(goblin)`
+  - `(troll)`
+  - `(elf)`
+  - `(niffler)`  
+
+### `(int/posx)`
+  - [0..16]
+
+### `(int/posy)`
+  - [0..12]
+
+### `(string/phaseType)`
+  - `(int/ballPhase)`
+  - `(int/playerPhase)`
+  - `(int/actionPhase)`
+  - `(int/fanPhase)`
+  - `(int/gameFinish)`
+
+
+## Definition
+
+### teamSnapshot
+``` json
+{
+  "points":"(int)",
+  "fans": [
+    {
+      "fanType": "(string/fanType)",
+      "banned": "(boolean)"
+    }
+  ],
+  "players": {
+    "seeker": {
+      "xPos": "(int/posx)",
+      "yPos": "(int/posy)",
+      "banned": "(boolean)",
+      "turnUsed" : "(boolean)"
+    },
+    "keeper": {
+      "xPos": "(int/posx)",
+      "yPos": "(int/posy)",
+      "banned": "(boolean)",
+      "holdsQuaffle" : "(boolean)",
+      "turnUsed" : "(boolean)"
+    },
+    "chaser1": {
+      "xPos": "(int/posx)",
+      "yPos": "(int/posy)",
+      "banned": "(boolean)",
+      "holdsQuaffle" : "(boolean)",
+      "turnUsed" : "(boolean)"
+    },
+    "chaser2": {
+      "xPos": "(int/posx)",
+      "yPos": "(int/posy)",
+      "banned": "(boolean)",
+      "holdsQuaffle" : "(boolean)",
+      "turnUsed" : "(boolean)"
+    },
+    "chaser3": {
+      "xPos": "(int/posx)",
+      "yPos": "(int/posy)",
+      "banned": "(boolean)",
+      "holdsQuaffle" : "(boolean)",
+      "turnUsed" : "(boolean)"
+    },
+    "beater1": {
+      "xPos": "(int/posx)",
+      "yPos": "(int/posy)",
+      "banned": "(boolean)",
+      "holdsBludger" : "(boolean)",
+      "turnUsed" : "(boolean)"
+    },
+    "beater2": {
+      "xPos": "(int/posx)",
+      "yPos": "(int/posy)",
+      "banned": "(boolean)",
+      "holdsBludger" : "(boolean)",
+      "turnUsed" : "(boolean)"
+    }
+  }
+}
+```
+
+### snapshot
+``` json
+{
+  "phase":"(string/phaseType)",
+  "spectatorUserName": [
+    "(string)"
+  ],
+  "round":"(int)",
+  "leftTeam":"(json/teamSnapshot)",
+  "rightTeam":"(json/teamSnapshot)",
+  "balls": {
+    "snitch": {
+      "xPos": "(int/posx)",
+      "yPos": "(int/posy)"
+    },
+    "quaffle": {
+      "xPos": "(int/posx)",
+      "yPos": "(int/posy)"
+    },
+    "bludger1": {
+      "xPos": "(int/posx)",
+      "yPos": "(int/posy)"
+    },
+    "bludger2": {
+      "xPos": "(int/posx)",
+      "yPos": "(int/posy)"
+    }
+  }
+}
+```
+# Next
+
+## Description
+
+Es wird an alle Clients eine Benachrichtigung für den nächsten Zug geschickt.
+Der Zug habende Spieler kann über die entityID herrausgefunden werden.  
+
+
+## Type Declaration
+
+### `(string/entityID)`
+  - `leftSeeker`
+  - `leftKeeper`
+  - `leftChaser1`
+  - `leftChaser2`
+  - `leftChaser3`
+  - `leftBeater1`
+  - `leftBeater2`
+  - `rightSeeker`
+  - `rightKeeper`
+  - `rightChaser1`
+  - `rightChaser2`
+  - `rightChaser3`
+  - `rightBeater1`
+  - `rightBeater2`
+  - `snitch`
+  - `bludger1`
+  - `bludger2`
+  - `quaffle`
+  - `leftGoblin`
+  - `leftTroll`
+  - `leftElf`
+  - `leftNiffler`
+  - `rightGoblin`
+  - `rightTroll`
+  - `rightElf`
+  - `rightNiffler`
+
+### `(string/turnType)`
+  - `move`
+  - `action`
+
+
+## Definition
+### next
+``` json
+{
+  "turn": "(string/entityID)",
+  "type": "(string/turnType)", //Either "action" or "move"
+  "timeout":"(string/millisec)"
+}
+```
+
+## Example
+
+Spieler auf der linken Seite wird aufgefordert seinen 3. Jäger zu bewegen, innerhalb der nächsten 7.5 Sekunden
+
+``` json
+{
+  "turn": "leftChaser3",
+  "type": "move",
+  "timeout":"7500"
+}
+```
+# Delta
+
+## Description
+
+ - Deltas werden geschickt um einen Zug zu machen (deltaRequest)
+ - und der Server zeigt das Ergebnisses einer phase oder eines Zugs damit an (deltaBroadcast).
+
+ | deltaType        | deltaRequest | deltaBroadcast |
+ |------------------|--------------|----------------|
+ | snitchCatch      |              | x              |
+ | bludgerBeating   | x            | x              |
+ | quaffleThrow     | x            | x              |
+ | snitchSnatch     | x            | x              |
+ | trollRoar        | x            | x              |
+ | elfTeleportation | x            | x              |
+ | goblinShock      | x            | x              |
+ | ban              |              | x              |
+ | bludgerKnockout  |              | x              |
+ | move             | x            | x              |
+
+## Type Declaration
+
+### `(int/posx)`
+  - [0..16]
+
+### `(int/posy)`
+  - [0..12]
+
+### `(string/deltaType)`
+  - `snitchCatch`
+  - `bludgerBeating`
+  - `quaffleThrow`
+  - `snitchSnatch`
+  - `trollRoar`
+  - `elfTeleportation`
+  - `goblinShock`
+  - `ban`
+  - `bludgerKnockout`
+  - `move`
+
+### `(string/entityID)`
+  - `leftSeeker`
+  - `leftKeeper`
+  - `leftChaser1`
+  - `leftChaser2`
+  - `leftChaser3`
+  - `leftBeater1`
+  - `leftBeater2`
+  - `rightSeeker`
+  - `rightKeeper`
+  - `rightChaser1`
+  - `rightChaser2`
+  - `rightChaser3`
+  - `rightBeater1`
+  - `rightBeater2`
+  - `snitch`
+  - `bludger1`
+  - `bludger2`
+  - `quaffle`
+  - `leftGoblin`
+  - `leftTroll`
+  - `leftElf`
+  - `leftNiffler`
+  - `rightGoblin`
+  - `rightTroll`
+  - `rightElf`
+  - `rightNiffler`
+
+## General Definition
+### deltaRequest, deltaBroadcast
+``` json
+{
+  "deltaType": "(string/deltaType)",
+  "success": "(boolean)",
+  "xPosOld":"(int/posx)",
+  "yPosOld":"(int/posy)",
+  "xPosNew":"(int/posx)",
+  "yPosNew":"(int/posy)",
+  "activeEntity": "(string/entityID)",
+  "passiveEntity": "(string/entityID)"
+}
+```
+
+## DeltaType-Specific Definition
+
+### `snitchCatch`
+
+Wird nur vom Server gesendet, da durch eine Bewegung vom Sucher auf das Feld des Schnatzes automatisch einen Versuch, den Schnatz zu fangen, ausgelöst wird. So kann auch kein "böser" Client das Spiel auf diese Art verändern.
+Diese Nachricht muss gesendet werden, wenn ein Sucher auf das Feld mit dem Schnatz zieht. Der Boolean "success" gibt entsprechend an, ob der Schnatz tatsächlich gefangen wurde.
+
+``` json
+{
+  "deltaType": "snitchCatch",
+  "success": (boolean), //If the catch was successful
+  "xPosOld": null,
+  "yPosOld": null,
+  "xPosNew": null,
+  "yPosNew": null,
+  "activeEntity": (string/entityID), //Seeker the snitch collides with
+  "passiveEntity": "snitch"
+}
+```
+
+### `bludgerBeating`
+
+``` json
+{
+  "deltaType": "bludgerBeating",
+  "success": null,
+  "xPosOld": (int/posx), //Old position of bludger
+  "yPosOld": (int/posy),
+  "xPosNew": (int/posx), //New position of bludger
+  "yPosNew": (int/posy),
+  "activeEntity": (string/entityID), //Beater that beats the bludger
+  "passiveEntity": (string/entityID) //Bludger that gets beaten
+}
+```
+
+### `quaffleThrow`
+
+``` json
+{
+  "deltaType": "quaffleThrow",
+  "success": (boolean), //If the quaffle does reach the desired field
+  "xPosOld": (int/posx), //Old position of the quaffle
+  "yPosOld": (int/posy),
+  "xPosNew": (int/posx), //New position of the quaffle
+  "yPosNew": (int/posy),
+  "activeEntity": (string/entityID), //Player that throws the quaffle
+  "passiveEntity": (string/entityID) or null //The new owner of the quaffle
+}
+```
+
+### `snitchSnatch`
+
+``` json
+{
+  "deltaType": "snitchSnatch",
+  "success": null,
+  "xPosOld": (int/posx), //Old position of the snitch
+  "yPosOld": (int/posy),
+  "xPosNew": (int/posx), //New position of the snitch
+  "yPosNew": (int/posy),
+  "activeEntity": (string/entityID), //Niffler that snatches after the snitch
+  "passiveEntity": "snitch"
+}
+```
+
+### `trollRoar`
+
+``` json
+{
+  "deltaType": "trollRoar",
+  "success": null,
+  "xPosOld": (int/posx), //Old position of the quaffle
+  "yPosOld": (int/posy),
+  "xPosNew": (int/posx), //New position of the quaffle
+  "yPosNew": (int/posy),
+  "activeEntity": (string/entityID), //Troll that roars
+  "passiveEntity": "quaffle"
+}
+```
+
+### `elfTeleportation`
+
+``` json
+{
+  "deltaType": "elfTeleportation",
+  "success": null,
+  "xPosOld": (int/posx), //Old position of the passive entity
+  "yPosOld": (int/posy),
+  "xPosNew": (int/posx), //New position of the passive entity
+  "yPosNew": (int/posy),
+  "activeEntity": (string/entityID), //Elf that does the teleportation
+  "passiveEntity": (string/entityID) //Entity that gets teleported by the elf
+}
+```
+
+### `goblinShock`
+
+``` json
+{
+  "deltaType": "goblinShock",
+  "success": null,
+  "xPosOld": (int/posx), //Old position of the quaffle
+  "yPosOld": (int/posy),
+  "xPosNew": (int/posx), //New position of the quaffle
+  "yPosNew": (int/posy),
+  "activeEntity": (string/entityID), //Goblin that shocks the passive entity
+  "passiveEntity": "quaffle"
+}
+{
+  "deltaType": "goblinShock",
+  "success": null,
+  "xPosOld": (int/posx), //Old position of the passive entity
+  "yPosOld": (int/posy),
+  "xPosNew": (int/posx), //New position of the passive entity
+  "yPosNew": (int/posy),
+  "activeEntity": (string/entityID), //Goblin that shocks the passive entity
+  "passiveEntity": (string/entityID) //Passive entity that gets shocked
+}
+```
+
+### `ban`
+
+``` json
+{
+  "deltaType": "ban",
+  "success": null,
+  "xPosOld": (int/posx),
+  "yPosOld": (int/posy),
+  "xPosNew": (int/posx),
+  "yPosNew": (int/posy),
+  "activeEntity": null,
+  "passiveEntity": (string/entityID) //Entity that gets banned
+}
+```
+
+### `bludgerKnockout`
+
+``` json
+{
+  "deltaType": "bludgerKnockout",
+  "success": null,
+  "xPosOld": null,
+  "yPosOld": null,
+  "xPosNew": null,
+  "yPosNew": null,
+  "activeEntity": (string/entityID), //The bludger that knocks the passive entity out
+  "passiveEntity": (string/entityID) //The passive entity that gets knocked out
+}
+```
+
+### `move`
+
+``` json
+{
+  "deltaType": "move",
+  "success": null,
+  "xPosOld": (int/posx), //Old position of the active entity
+  "yPosOld": (int/posy),
+  "xPosNew": (int/posx), //New position of the active entity
+  "yPosNew": (int/posy),
+  "activeEntity": (string/entityID), //Entity that gets a new position
+  "passiveEntity": null
+}
+```
+
+
+
+## Example
+
+User sendet seine Entscheidung
+``` json
+{
+  "deltaType": "quaffleThrow",
+  "success": null,
+  "xPosOld":4,
+  "yPosOld":4,
+  "xPosNew":6,
+  "yPosNew":6,
+  "activeEntity": "leftChaser1",
+  "passiveEntity": "quaffle"
+}
+```
+
+broadcast: Durch Jäger des linken Spielers auf Feld 4,4 werfen, nicht erfolgreich, abgefangen durch Spieler auf Position 5,5. Durch die Positionsinformation ist klar schließbar wer den Ball abgefangen hat, da sich nun beide auf dem selben Feld befinden.
+``` json
+{
+  "deltaType": "quaffleThrow",
+  "success": "false",
+  "xPosOld": 4,
+  "yPosOld": 4,
+  "xPosNew": 5,
+  "yPosNew": 5,
+  "activeEntity": "leftChaser1",
+  "passiveEntity": "quaffle"
+}
+```
+# Pause
+
+## Description
+Eine Pause-Request kann von allen spielenden Clients an den Server gesendet werden.
+Außerdem können alle spielenden Clients eine Continue-Request an den Server senden.
+
+Nach jeder Request, broadcastet der Server eine Pause-Response an alle Clients(auch Zuschauer),
+die einen boolschen Wert enthält, der den aktuellen Pause-Zustand
+(Spiel pausiert: pause = true oder Spiel nicht pausiert: pause = false) enthält.
+Der Server regelt also die komplette Logik und ändert den Pause-Zustand anhand der eingehenden Requests
+wie im Lastenheft vorgegeben.
+
+Das Lastenheft definiert folgende Serverlogik: "Falls ein mitspielender Client eine Pausierung der Partie wünscht,
+unterbricht der Server diese, bis einer der Mitspieler anzeigt, dass er weiterspielen möchte.
+KI-Clients dürfen keine Pausen verlangen."
+
+Der Server überprüft also bei einer Pause-Request ob die empfangene userName mit einem spielenden Client übereinstimmt, wenn ja
+pausiert er das Spiel, falls es nicht schon pausiert ist. Analog überprüft er die userName wenn er eine Continue-Request empfängt,
+wenn diese mit einem spielenden Client übereinstimmt, beendet er die Pause, falls das Spiel nicht schon läuft.
+In allen Fällen broadcastet der Server eine Pause-Response an alle Clients.
+
+## Definition
+### pauseRequest
+``` json
+{
+  "message" : "(string)"
+}
+```
+### continueRequest
+``` json
+{
+  "message" : "(string)"
+}
+```
+### pauseResponse
+``` json
+{
+  "message": "(string)",
+  "userName":"(string)",
+  "pause": "(boolean)"
+}
+```
+# Reconnect
+
+## Description
+Wird mit unicast an Client gesendet, wenn er sich bei laufendem Spiel einloggt.
+d.h. Nachdem matchStart versendet wurde.
+So erhält der Zuschauer welcher später
+sich zu dem Spiel verbindet mit nur einem json die gesamten Informationen.
+
+Server muss eventuell auch delta und next payloads nachschicken, sonst muss der
+Client auf den nächsten Zug warten!
+
+## Definition
+
+### reconnect
+``` json
+{
+  "matchStart":"(json/matchStart)",
+  "snapshot" : "(json/snapshot)"
+}
+```
+
+### Example
+Ein Zuschauer betritt das spiel etwas später es wurden allerdings schon wieder ein next und zwei deltas an alle geschickt, dies wird nachgeholt.
+```
+# reconnect start
+spectator -> server: joinRequest
+server -> broadcast: loginGreeting
+server -> spectator: joinResponse
+server -> spectator: reconnect
+server -> spectator: next
+server -> spectator: delta
+server -> spectator: delta
+# reconnect end
+```
+# Replay
+
+## Description
+
+Das Replay besteht aus statischen Informationen wie matchConfig,leftTeamConfig, alle Spieler welche mindesten einmal das Spiel betreten haben und einer log-Liste von Deltas.
+Der Client kann das Replay nur bekommen wenn er sich noch mit der Lobby befindet in welcher das Spiel statt findet.
+Das Replay wird in einem file persistent abgespeichert.
+
+
+## Type Declaration
+
+### `(string/replayPayloadType)` (subset of payloadType)
+  - `deltaBroadcast`
+  - `matchFinish` (letztes Objekt in im log array)
+
+
+## Definition
+### getReplay
+``` json
+{
+
+}
+```
+
+### replay (file)
+``` json
+{
+  "lobby": "(string)",
+  "startTimestamp":"",
+  "matchConfig":"(json/matchConfig)",
+  "leftTeamConfig":"(json/teamConfig)",
+  "rightTeamConfig":"(json/teamConfig)",
+  "leftTeamUserName":"(string)",
+  "rightTeamUserName":"(string)",
+  "spectatorUserName": [
+    "(string)"
+  ],
+  "firstSnapshot":"(json/snapshot)",
+  "log": [
+    {
+      "date": "(string/yyyy-MM-dd HH:mm:ss.SSS)",
+      "payloadType": "(string/replayPayloadType)",
+      "payload": "(json)"
+    }
+  ]
+}
+```
+
+# standardisierte Mods (modifications)
+
+## Description
+
+Es ist nicht verpflichtend Mods zu implementieren.
+Falls der Server und der userClient die Mods unterstützen können diese
+im login so aktiviert z.B. `{"mods":["chat","error","replayWithSnapshot"]}`
+
+### Overview
+
+| request               | broadcast  | unicast            | siehe                          |
+|-----------------------|------------|--------------------|--------------------------------|
+| sendChat              | globalChat |                    | siehe Chat-mod                 |
+|                       |            |                    | siehe disableGenderBalance-mod |
+| getReplayWithSnapshot |            | replayWithSnapshot | siehe ReplayWithSnapshot-mod   |
+|                       |            | privateError       | siehe Error-mod                |
+|                       |            | privateWarning     | siehe Warning-mod              |
+## Chat-mod
+
+### Description
+Damit man sich mit anderen unterhalten kann.
+Zuschauer und Spielende können in den Chat schreiben.
+der Server broadcastet dann an alle gerade verbundenen Spieler.
+Wird im login so aktiviert `{"mods":["chat"]}`
+
+### Definition
+#### sendChat
+``` json
+{
+  "information" : "(string)"
+}
+```
+#### globalChat
+``` json
+{
+  "senderUserName": "(string/alphanumerisch)",
+  "information" : "(string)"
+}
+```
+## DisableGenderBalance-mod
+### Description
+Schaltet die Regel das Teams nur maximal eine bestimmte Anzahl von männlichen und weiblichen Spielfiguren haben drüfen aus.
+Wird im login so aktiviert `{"mods":["disableGenderBalance"]}`
+
+## ReplayWithSnapshot-mod
+
+### Description
+
+Wie Replay nur alle snapshot und next sind auch enthalten.
+Wird im login so aktiviert `{"mods":["replayWithSnapshot"]}`
+
+### Type Declaration
+
+#### `(string/replayPayloadType2)` (subset of payloadType)
+  - `matchStart`
+  - `snapshot`
+  - `next`
+  - `deltaBroadcast`
+  - `matchFinish` (letztes Objekt in im log array)
+
+
+### Definition
+
+#### getReplayWithSnapshot
+``` json
+{
+
+}
+```
+
+#### replayWithSnapshot (file)
+``` json
+{
+  "lobby": "(string)",
+  "startTimestamp":"",
+  "matchConfig":"(json/matchConfig)",
+  "leftTeamConfig":"(json/teamConfig)",
+  "rightTeamConfig":"(json/teamConfig)",
+  "leftTeamUserName":"(string)",
+  "rightTeamUserName":"(string)",
+  "spectatorUserName": [
+    "(string)"
+  ],
+  "firstSnapshot":"(json/snapshot)",
+  "log": [
+    {
+      "date": "(string/yyyy-MM-dd HH:mm:ss.SSS)",
+      "payloadType": "(string/replayPayloadType2)",
+      "payload": "(json)"
+    }
+  ]
+}
+```
+## Error-mod
+
+### Description
+Bei einem Fehler welcher es erfordert das der Server die Verbindung zum Client
+abbricht.
+Der Server sendet über unicast.
+Wird im login so aktiviert `{"mods":["error"]}`
+
+
+### Definition
+
+### privateError
+``` json
+{
+  "errorProducingPayloadType" : "(string/payloadType)",
+  "information" : "(string)"
+}
+```
+## Warning-mod
+
+### Description
+Bei einem Fehler welcher vom Server bemerkt wird,
+der Client wird informiert,
+weiter passiert nichts.
+Der Server sendet ein warning
+Wird im login so aktiviert `{"mods":["warning"]}`
+
+### Definition
+
+### privateWarning
+``` json
+{
+  "warningProducingPayloadType" : "(string/payloadType)",
+  "information" : "(string)"
+}
+```
+# appendix
+
+![quidditchPitch Positionen. x und  y definiert](picture/quidditchPitch.png)
